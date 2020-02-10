@@ -1,2 +1,2 @@
 # mircroservice-practise
-docker build -t product-service
+docker build -t product-service .
