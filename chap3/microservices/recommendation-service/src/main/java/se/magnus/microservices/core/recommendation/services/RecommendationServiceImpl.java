@@ -14,7 +14,9 @@ import java.util.List;
 
 @RestController
 public class RecommendationServiceImpl implements RecommendationService {
+
     private static final Logger LOG = LoggerFactory.getLogger(RecommendationServiceImpl.class);
+
     private final ServiceUtil serviceUtil;
 
     @Autowired
@@ -24,6 +26,7 @@ public class RecommendationServiceImpl implements RecommendationService {
 
     @Override
     public List<Recommendation> getRecommendations(int productId) {
+
         if (productId < 1) throw new InvalidInputException("Invalid productId: " + productId);
 
         if (productId == 113) {

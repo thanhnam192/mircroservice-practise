@@ -1,14 +1,11 @@
-server:
-  port: 7001
+server.port: 7001
+
 logging:
   level:
     root: INFO
-    se.magnus.microservices: DEBUG
+    se.magnus: DEBUG
 
 ---
+spring.profiles: docker
 
-spring:
-  profiles: docker
-server:
-  port: 8080
-
+server.port: 8080

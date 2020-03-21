@@ -12,10 +12,13 @@ import se.magnus.util.http.ServiceUtil;
 
 @RestController
 public class ProductServiceImpl implements ProductService {
-    private ServiceUtil serviceUtil;
+
     private static final Logger LOG = LoggerFactory.getLogger(ProductServiceImpl.class);
+
+    private final ServiceUtil serviceUtil;
+
     @Autowired
-    public ProductServiceImpl(ServiceUtil serviceUtil){
+    public ProductServiceImpl(ServiceUtil serviceUtil) {
         this.serviceUtil = serviceUtil;
     }
 

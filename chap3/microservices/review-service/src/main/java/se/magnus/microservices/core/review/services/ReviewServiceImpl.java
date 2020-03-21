@@ -14,6 +14,7 @@ import java.util.List;
 
 @RestController
 public class ReviewServiceImpl implements ReviewService {
+
     private static final Logger LOG = LoggerFactory.getLogger(ReviewServiceImpl.class);
 
     private final ServiceUtil serviceUtil;
@@ -25,6 +26,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public List<Review> getReviews(int productId) {
+
         if (productId < 1) throw new InvalidInputException("Invalid productId: " + productId);
 
         if (productId == 213) {
