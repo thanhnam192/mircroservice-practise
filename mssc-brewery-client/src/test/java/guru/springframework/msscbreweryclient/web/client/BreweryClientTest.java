@@ -2,11 +2,13 @@ package guru.springframework.msscbreweryclient.web.client;
 
 import guru.springframework.msscbreweryclient.web.client.BreweryClient;
 import guru.springframework.msscbreweryclient.web.model.BeerDto;
+import guru.springframework.msscbreweryclient.web.model.BeerStyleEnum;
 import guru.springframework.msscbreweryclient.web.model.CustomerDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.UUID;
 
@@ -28,7 +30,7 @@ class BreweryClientTest {
     @Test
     void testSaveNewBeer() {
         //given
-        BeerDto beerDto = BeerDto.builder().beerName("New Beer").build();
+        BeerDto beerDto = BeerDto.builder().beerName("New Beer").beerStyle(BeerStyleEnum.ALE).price(new BigDecimal("12.95")).upc("13123123123").build();
 
         URI uri = client.saveNewBeer(beerDto);
 
