@@ -43,16 +43,13 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
 
     private static final Logger LOG = LoggerFactory.getLogger(ProductCompositeIntegration.class);
 
-    private final RestTemplate restTemplate;
     private final ObjectMapper mapper;
 
-    private final String productServiceUrl;
-    private final String recommendationServiceUrl;
-    private final String reviewServiceUrl;
-    private final String productServiceHost;
-    private final String recommendationServiceHost;
-    private final String reviewServiceHost;
-    private final WebClient webClient;
+    private final String productServiceUrl = "http://product";
+    private final String recommendationServiceUrl = "http://recommendation";
+    private final String reviewServiceUrl = "http://review";
+    private final WebClient.Builder webClientBuilder;
+    private  WebClient webClient;
     private MessageSources messageSources;
 
     public interface MessageSources {
@@ -73,33 +70,21 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
 
     @Autowired
     public ProductCompositeIntegration(
+            WebClient.Builder webClientBuilder,
             MessageSources messageSources,
-            WebClient.Builder webClient,
-        RestTemplate restTemplate,
-        ObjectMapper mapper,
-
-        @Value("${app.product-service.host}") String productServiceHost,
-        @Value("${app.product-service.port}") int    productServicePort,
-
-        @Value("${app.recommendation-service.host}") String recommendationServiceHost,
-        @Value("${app.recommendation-service.port}") int    recommendationServicePort,
-
-        @Value("${app.review-service.host}") String reviewServiceHost,
-        @Value("${app.review-service.port}") int    reviewServicePort
+        ObjectMapper mapper
     ) {
-
+        this.webClientBuilder = webClientBuilder;
         this.messageSources = messageSources;
-        this.webClient = webClient.build();
-        this.restTemplate = restTemplate;
         this.mapper = mapper;
 
-        productServiceUrl        = "http://" + productServiceHost + ":" + productServicePort + "/product";
-        recommendationServiceUrl = "http://" + recommendationServiceHost + ":" + recommendationServicePort + "/recommendation";
-        reviewServiceUrl         = "http://" + reviewServiceHost + ":" + reviewServicePort + "/review";
+    }
 
-        this.productServiceHost        = "http://" + productServiceHost + ":" + productServicePort;
-        this.recommendationServiceHost = "http://" + recommendationServiceHost + ":" + recommendationServicePort ;
-        this.reviewServiceHost        = "http://" + reviewServiceHost + ":" + reviewServicePort ;
+    private WebClient getWebClient() {
+        if (webClient == null) {
+            webClient = webClientBuilder.build();
+        }
+        return webClient;
     }
 
     @Override
@@ -123,9 +108,9 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
 
     @Override
     public Mono<Product> getProduct(int productId) {
-        String url = productServiceUrl + "/" + productId;
+        String url = productServiceUrl + "/product/" + productId;
         LOG.debug("Will call the getProduct API on URL: {}", url);
-        return webClient.get().uri(url).retrieve().bodyToMono(Product.class).log()
+        return getWebClient().get().uri(url).retrieve().bodyToMono(Product.class).log()
                 .onErrorMap(HttpClientErrorException.class, ex -> handleHttpClientException(ex));
 
 
@@ -168,9 +153,9 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
 
     @Override
     public Flux<Recommendation> getRecommendations(int productId) {
-            String url = recommendationServiceUrl + "?productId=" + productId;
+            String url = recommendationServiceUrl + "/recommendation?productId=" + productId;
             LOG.debug("Will call the getRecommendations API on URL: {}", url);
-            return webClient.get().uri(url).retrieve().bodyToFlux(Recommendation.class).log().onErrorResume(error -> empty());
+            return getWebClient().get().uri(url).retrieve().bodyToFlux(Recommendation.class).log().onErrorResume(error -> empty());
     }
 
     @Override
@@ -209,11 +194,11 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
 
     @Override
     public Flux<Review> getReviews(int productId) {
-            String url = reviewServiceUrl + "?productId=" + productId;
+            String url = reviewServiceUrl + "/review?productId=" + productId;
 
             LOG.debug("Will call the getReviews API on URL: {}", url);
 
-            return webClient.get().uri(url).retrieve().bodyToFlux(Review.class).log().onErrorResume(error ->  empty());
+            return getWebClient().get().uri(url).retrieve().bodyToFlux(Review.class).log().onErrorResume(error ->  empty());
     }
 
     @Override
@@ -255,18 +240,18 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
         }
     }
     public Mono<Health> getProductHealth() {
-        return getHealth(productServiceHost );
+        return getHealth(productServiceUrl );
     }
     public Mono<Health> getRecommendationHealth() {
-        return getHealth(recommendationServiceHost);
+        return getHealth(recommendationServiceUrl);
     }
     public Mono<Health> getReviewHealth() {
-        return getHealth(reviewServiceHost);
+        return getHealth(reviewServiceUrl);
     }
     private Mono<Health> getHealth(String url) {
         url += "/actuator/health";
         LOG.debug("Will call the Health API on URL: {}", url);
-        return webClient.get().uri(url).retrieve().bodyToMono(String.class)
+        return getWebClient().get().uri(url).retrieve().bodyToMono(String.class)
                 .map(s -> new Health.Builder().up().build())
                 .onErrorResume(ex -> Mono.just(new
                         Health.Builder().down(ex).build()))
