@@ -1,4 +1,4 @@
-# There is an Microservices Architecture of my practise
+# There is an Microservices Architecture of my project
 ![](MICROSERVICES_WITH_SPRING_BOOT_AND_SPRING_CLOUD.jpg)
 
 1. HTTPS is used for external communication, while plain text HTTP is used inside the system landscape.
