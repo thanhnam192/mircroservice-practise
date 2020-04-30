@@ -7,9 +7,9 @@
 4. The edge server and the product composite microservice will get the authorization server's public keys from its jwk-set endpoint, and use them to validate the signature of the JWT-based access tokens
 
 # We can run them on Docker
-1. Go to SpringbootAndSpringcloud folder
-2. Build an Images
-docker-compose build
-3. Run our Images
-docker-compose run -d
-4. We can run automation test by run  test-em-all.bash
+1. Go to SpringbootAndSpringcloud folder <br/>
+2. Build an Images <br/>
+docker-compose build <br/>
+3. Run our Images <br/>
+docker-compose run -d <br/>
+4. We can run automation test by run  test-em-all.bash <br/>
