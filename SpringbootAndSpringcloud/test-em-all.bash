@@ -190,7 +190,8 @@ fi
 
 waitForService curl -k https://$HOST:$PORT/actuator/health
 
-ACCESS_TOKEN=$(curl -k https://writer:secret@$HOST:$PORT/oauth/token -d grant_type=password -d username=magnus -d password=password -s | jq .access_token -r)
+#ACCESS_TOKEN=$(curl -k https://writer:secret@$HOST:$PORT/oauth/token -d grant_type=password -d username=magnus -d password=password -s | jq .access_token -r)
+ACCESS_TOKEN=$(curl --request POST --url 'https://dev-qzb4c4bw.auth0.com/oauth/token' --header 'content-type: application/json' --data '{"grant_type":"password", "username":"barackobanam@gmail.com","password":"Nam829530123","audience":"https://localhost:8443/product-composite", "scope":"openidemail product:read product:write", "client_id": "UiCrVpKul2GZVj3R17SknV7YuuuCISMD","client_secret": "2V2i6DgE3VtO-ZAuah2w89TMguZniZKkjlAPcROmqy3-ltaW-cGzDBVYreiqZ1jc"}' -s | jq -r .access_token)
 AUTH="-H \"Authorization: Bearer $ACCESS_TOKEN\""
 
 setupTestdata
@@ -230,7 +231,8 @@ assertEqual "\"Type mismatch.\"" "$(echo $RESPONSE | jq .message)"
 assertCurl 401 "curl -k https://$HOST:$PORT/product-composite/$PROD_ID_REVS_RECS -s"
 
 # Verify that the reader - client with only read scope can call the read API but not delete API.
-READER_ACCESS_TOKEN=$(curl -k https://reader:secret@$HOST:$PORT/oauth/token -d grant_type=password -d username=magnus -d password=password -s | jq .access_token -r)
+#READER_ACCESS_TOKEN=$(curl -k https://reader:secret@$HOST:$PORT/oauth/token -d grant_type=password -d username=magnus -d password=password -s | jq .access_token -r)
+READER_ACCESS_TOKEN=$(curl --request POST --url 'https://dev-qzb4c4bw.auth0.com/oauth/token' --header 'content-type: application/json' --data '{"grant_type":"password", "username":"barackobanam@gmail.com","password":"Nam829530123","audience":"https://localhost:8443/product-composite", "scope":"openidemail product:read", "client_id": "UiCrVpKul2GZVj3R17SknV7YuuuCISMD", "client_secret":"2V2i6DgE3VtO-ZAuah2w89TMguZniZKkjlAPcROmqy3-ltaW-cGzDBVYreiqZ1jc"}' -s | jq -r .access_token)
 READER_AUTH="-H \"Authorization: Bearer $READER_ACCESS_TOKEN\""
 
 assertCurl 200 "curl -k https://$HOST:$PORT/product-composite/$PROD_ID_REVS_RECS $READER_AUTH -s"

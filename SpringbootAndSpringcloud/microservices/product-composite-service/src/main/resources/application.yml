@@ -54,6 +54,11 @@ app:
   eureka-username: u
   eureka-password: p
   eureka-server: localhost
+  auth-server: localhost
+
+
+#spring.security.oauth2.resourceserver.jwt.jwk-set-uri: http://${app.auth-server}:9999/.well-known/jwks.json
+spring.security.oauth2.resourceserver.jwt.issuer-uri: https://dev-qzb4c4bw.auth0.com/
 
 eureka:
   client:
@@ -114,3 +119,4 @@ spring.rabbitmq.host: rabbitmq
 spring.cloud.stream.kafka.binder.brokers: kafka
 app:
   eureka-server: eureka
+  auth-server: auth-server
